@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="12dp"
+    app:cardCornerRadius="16dp"
+    android:layout_margin="16dp"
+    app:cardBackgroundColor="#108CEA">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            android:background="#FFFFFFFF"
+
+            ><RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <!-- ImageVIew to display our Course Image -->
+                <ImageView
+                    android:id="@+id/idIVCourseImage"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_margin="10dp"
+                    android:contentDescription="@string/app_name"
+                    android:padding="5dp"
+                    android:src="@drawable/logocompany" />
+
+                <!-- Text View to display Course Name -->
+                <TextView
+                    android:id="@+id/companyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@id/idIVCourseImage"
+                    android:text="CompanyName"
+                    android:textColor="#108CEA"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- Text VIew to display Course Rating -->
+                <!-- Image used in present in drawable folder -->
+                <TextView
+                    android:id="@+id/nomPoste"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/companyName"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/idIVCourseImage"
+                    android:drawablePadding="2dp"
+                    android:text="posteName"
+                    app:drawableStartCompat="@drawable/ic_work" />
+        </RelativeLayout>
+
+        </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

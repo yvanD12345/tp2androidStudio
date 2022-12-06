@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">genshin impact</string>
+    <string name="portraitText">Portrait</string>
+    <string name="landscapeText">Landscape</string>
+    <string name="text">text</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="google_map_api_key">AIzaSyAJoNr4pyqeb5Rn8LPshm7KonxVIkBfwk0</string>
+</resources>
