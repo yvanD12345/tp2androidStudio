@@ -2,11 +2,27 @@ package com.example.tp1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.tp1.bds.DBHelper;
+import com.example.tp1.data.ComptePOJO;
+import com.example.tp1.data.Entreprise;
+import com.example.tp1.network.ConnectUtils;
+import com.example.tp1.network.MonAPIClient;
+import com.example.tp1.network.MonApi;
+
+import java.util.List;
+import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RenplirOffreStage extends AppCompatActivity {
 
@@ -16,6 +32,9 @@ public class RenplirOffreStage extends AppCompatActivity {
     Button bouttonPoster;
     //creation de la bd
     DBHelper Tp1bd;
+
+    private MonApi client = MonAPIClient.getRetrofit().create(MonApi.class);
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +75,9 @@ public class RenplirOffreStage extends AppCompatActivity {
                 String PostalCodeEnString = postalCode.getText().toString();
                 //si le string == "" c'est qu'il a echouer la  sa verification en n'etant pas conforme et si l'adresse == ""
                 //ca veux dire qu'un des n'a pas été rempli
+
+
+                /*
                 if(UrlEnString.equals("") || AdresseEnString.equals("")) {
 
                     Toast.makeText(RenplirOffreStage.this, "l'offre de stage n'a pas été postuléw", Toast.LENGTH_SHORT).show();
@@ -68,6 +90,42 @@ public class RenplirOffreStage extends AppCompatActivity {
                     }
 
                 }
+
+                 */
+
+                ajouterEntrepriseEnEtantConnecter();
+            }
+
+            public void ajouterEntrepriseEnEtantConnecter(){
+                String id = generateUid().toString();
+                String nomCompanyEnString = nomCompanie.getText().toString();
+                String emailEnString = email.getText().toString();
+                String contactEnString= Contact.getText().toString();
+                String nomPosteEnString = poste.getText().toString();
+                String VilleEnString= ville.getText().toString();
+                String AdresseEnString = concatenationAdresse();
+                String UrlEnString = verifUrl();
+                String telephoneEnString= telephone.getText().toString();
+                String PostalCodeEnString = postalCode.getText().toString();
+
+                Entreprise entreprise = new Entreprise(id,nomCompanyEnString,contactEnString,
+                        emailEnString,telephoneEnString,UrlEnString,AdresseEnString,
+                        VilleEnString,"",PostalCodeEnString,"",false);
+                client.creerEntreprise(ConnectUtils.authToken,entreprise).enqueue(new Callback<Entreprise>(){
+
+                    @Override
+                    public void onResponse(Call<Entreprise> call, Response<Entreprise> response) {
+                        if (response.isSuccessful()) {
+
+                            Log.d("tag","ajout d'entreprise reussi");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Entreprise> call, Throwable t) {
+
+                    }
+                });
             }
 
 //creer l'adresse à partir de la concatenation de la rue , nom de rue et la ville
@@ -77,6 +135,10 @@ public class RenplirOffreStage extends AppCompatActivity {
                     adresse = numeroDeRue.getText().toString()+" "+ nomRue.getText().toString()+" "+ville.getText().toString();
 
                 return adresse;
+            }
+            public UUID generateUid(){
+                UUID luid = UUID.randomUUID();
+                return luid;
             }
 
             //si le string ne contient pas https je retourne un url conforme

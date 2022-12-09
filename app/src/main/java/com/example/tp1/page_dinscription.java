@@ -4,18 +4,32 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tp1.bds.DBHelper;
+import com.example.tp1.data.ComptePOJO;
+import com.example.tp1.data.CompteResult;
+import com.example.tp1.data.CreationCompteData;
+import com.example.tp1.network.MonAPIClient;
+import com.example.tp1.network.MonApi;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class page_dinscription extends AppCompatActivity {
-    EditText username, mdp, confMdp;
+    EditText username, mdp, confMdp, email,name;
 
     Button registerBoutton;
 
     DBHelper Tp1bd;
+
+    private MonApi client = MonAPIClient.getRetrofit().create(MonApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +40,17 @@ public class page_dinscription extends AppCompatActivity {
 
         username = (EditText) findViewById(R.id.inputPswL);
         mdp = (EditText) findViewById(R.id.inputPsw);
+        email = (EditText) findViewById(R.id.inputCourriell);
         confMdp = (EditText) findViewById(R.id.inputConfPsw);
+        name = (EditText) findViewById(R.id.inputNom);
 
 
-        InscrireUser();
-
+      //  InscrireUser();
+InscrireCompte();
     }
 
 
-
+/*
     protected void InscrireUser() {
         registerBoutton = (Button)  findViewById(R.id.buttonRegister);
         registerBoutton.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +89,44 @@ public class page_dinscription extends AppCompatActivity {
             }
         });
     }
+*/
+    protected void InscrireCompte(){
+        registerBoutton = (Button)  findViewById(R.id.buttonRegister);
+        registerBoutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String utilisateur = username.getText().toString();
+                String mdpS = mdp.getText().toString();
+                String confirmationMdp = confMdp.getText().toString();
+                String nameS = name.getText().toString();
+                String prenom = username.getText().toString();
 
+                if (!utilisateur.equals("") || !mdpS.equals("") || !confirmationMdp.equals("")
+                        || !nameS.equals("") || !prenom.equals("")) {
+               if(mdpS.equals(confirmationMdp)) {
+                   CreationCompteData creationCompteData = new CreationCompteData(utilisateur, mdpS, confirmationMdp, nameS, prenom);
+                   client.creerCompte(creationCompteData).enqueue(new Callback<ComptePOJO>() {
+                       @Override
+                       public void onResponse(Call<ComptePOJO> call, Response<ComptePOJO> response) {
+                           Log.d("tag", "inscription réussi");
+                       }
+
+                       @Override
+                       public void onFailure(Call<ComptePOJO> call, Throwable t) {
+
+                       }
+                   });
+               }
+               else {
+                   Toast.makeText(page_dinscription.this,"password et confirmpassword ne match pas ",Toast.LENGTH_SHORT).show();
+               }
+                }
+                else {
+                    Toast.makeText(page_dinscription.this,"veuillez remplir tout les champs ",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
     protected void AllerAlaPageConnexion(){
 
         TextView button = findViewById(R.id.userAlreadyexist);

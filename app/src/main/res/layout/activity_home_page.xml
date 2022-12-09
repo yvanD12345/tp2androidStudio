@@ -110,8 +110,4 @@
         app:srcCompat="@drawable/map_ic" />
 
 
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

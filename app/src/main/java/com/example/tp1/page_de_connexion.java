@@ -4,17 +4,38 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tp1.bds.DBHelper;
+import com.example.tp1.data.ComptePOJO;
+import com.example.tp1.data.CompteResult;
+import com.example.tp1.data.ConnexionUtilisateur;
+import com.example.tp1.data.LoginData;
+import com.example.tp1.network.ConnectUtils;
+import com.example.tp1.network.MonAPIClient;
+import com.example.tp1.network.MonApi;
+
+import java.util.HashMap;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class page_de_connexion extends AppCompatActivity {
 
     EditText username, mdp;
     Button bouttonLogin;
     DBHelper Tp1bd;
+    private MonApi client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,29 +54,81 @@ public class page_de_connexion extends AppCompatActivity {
         bouttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             String userEntrer = username.getText().toString();
-             String mdpEntrer = mdp.getText().toString();
 
+
+                client = MonAPIClient.getRetrofit().create(MonApi.class);
+
+                ConnexionUtilisateur user = new ConnexionUtilisateur();
+                user.setId_compte(ConnectUtils.authId);
+                client.testerConnexion(ConnectUtils.authToken, user.getId_compte()).enqueue(
+                        new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (!response.isSuccessful()) {
+
+                                    connecter();
+                                }
+                                else {
+
+
+
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                connecter();
+                            }
+                        }
+                );
+              /*
              if(userEntrer.equals("") || mdpEntrer.equals("")){
                  Toast.makeText(page_de_connexion.this,"un ou plusieurs champs sont vides. Veuillez les remplir", Toast.LENGTH_SHORT).show();
              }
              else {
-                 //valide les infos entrer
-                 Boolean validerUser = Tp1bd.validationUserPsw(userEntrer,mdpEntrer);
-                 if(validerUser == true){
-                     Toast.makeText(page_de_connexion.this,"connexion reussi",Toast.LENGTH_SHORT).show();
-                     Intent intent = new Intent(getApplicationContext(),HomePage.class);
-                     startActivity(intent);
-                 }
-                 else{
-                     Toast.makeText(page_de_connexion.this,"mot de passe invalide",Toast.LENGTH_SHORT).show();
-                 }
+
              }
+             */
             }
         });
+
+
     }
+
+    private void connecter() {
+
+        String userEntrer = username.getText().toString();
+        String mdpEntrer = mdp.getText().toString();
+
+        LoginData loginData = new LoginData(userEntrer, mdpEntrer);
+
+        client.connecter(loginData).enqueue(new Callback<CompteResult>() {
+            @Override
+            public void onResponse(Call<CompteResult> call, Response<CompteResult> response) {
+                if (response.isSuccessful()) {
+                    CompteResult json = response.body();
+                    ConnectUtils.authToken = json.getAccessToken();
+                    ConnectUtils.authId = json.getId();
+                    ConnectUtils.authTypeUtilisateur = json.getTypeCompte();
+                    Intent connexion = new Intent(page_de_connexion.this,HomePage.class);
+                    String[] myStrings = new String[] {userEntrer,mdpEntrer};
+                    connexion.putExtra("strings", myStrings);
+                    startActivity(connexion);
+                    Log.d("tag", "connexion faite");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CompteResult> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+
 //permet de lancer l'activité d'invité
-    protected void AllerALaPageInscription(){
+    public void AllerALaPageInscription(){
         TextView button = findViewById(R.id.RegisterLink);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

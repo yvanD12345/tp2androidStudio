@@ -7,6 +7,31 @@
     tools:context=".page_dinscription"
     android:background="@drawable/background">
 
+    <EditText
+        android:id="@+id/inputNom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/input_bigger"
+        android:drawableLeft="@drawable/ic_person"
+        android:ems="10"
+        android:hint="nom"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:textColorHint="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo"
+        app:layout_constraintVertical_bias="0.008" />
+
     <TextView
         android:id="@+id/logo"
         android:layout_width="150dp"
@@ -27,7 +52,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
         android:layout_marginEnd="40dp"
         android:background="@drawable/input_bigger"
         android:drawableLeft="@drawable/ic_person"
@@ -42,10 +66,10 @@
         android:textColorHint="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/inputNom"
+        app:layout_constraintVertical_bias="0.057" />
 
     <EditText
         android:id="@+id/inputUsernameL"
@@ -138,7 +162,7 @@
         android:text="Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/inputConfPsw"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/inputConfPsw"
         app:layout_constraintTop_toBottomOf="@+id/inputConfPsw"
         app:layout_constraintVertical_bias="0.0" />

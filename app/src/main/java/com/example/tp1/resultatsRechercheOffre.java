@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.tp1.bds.DBHelper;
+
 import java.util.ArrayList;
 //sert à afficher la recherche ne le renez pas en compte je ne l'ai pas fini
 public class resultatsRechercheOffre extends AppCompatActivity {

@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tp1.bds.DBHelper;
+
 import java.util.HashMap;
 import java.util.Map;
 

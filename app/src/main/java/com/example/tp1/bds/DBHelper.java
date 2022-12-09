@@ -1,4 +1,4 @@
-package com.example.tp1;
+package com.example.tp1.bds;
 
 import android.content.ContentValues;
 import android.content.Context;
