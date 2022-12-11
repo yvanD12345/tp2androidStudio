@@ -4,13 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.example.tp1.bds.DBHelper;
 import com.example.tp1.data.ComptePOJO;
@@ -30,8 +36,9 @@ import retrofit2.Response;
 public class  HomePage extends AppCompatActivity {
    DBHelper Tp1bd;
    SearchView elementRechercher;
+   TextView nomEtudiant ;
    Button bouttonDeco;
-   ImageView bouttonMap, bouttonAjouterOffre;
+   ImageView bouttonMap, bouttonAjouterOffre, imagePourStage;
     RecyclerView recyclerView;
     RecyclerView recyclerViewEtudiant;
     ArrayList<Entreprise> listeEntreprises;
@@ -49,7 +56,11 @@ public class  HomePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+      /*  LayoutInflater inflater = (LayoutInflater) HomePage.this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        ViewGroup view = (ViewGroup) findViewById(android.R.id.content);
+        View layout = inflater.inflate(R.layout.designe_recyclervew2, null);
 
+        TextView text = (TextView) layout.findViewById(R.id.companyName);*/
 
         Tp1bd = new DBHelper(this);
 
@@ -57,6 +68,8 @@ public class  HomePage extends AppCompatActivity {
         listeEtudiants = new ArrayList<ComptePOJO>();
         recyclerView = findViewById(R.id.recyclerview);
         recyclerViewEtudiant = findViewById(R.id.recyclerview);
+        imagePourStage = findViewById(R.id.idIVCourseImage);
+        nomEtudiant = findViewById(R.id.companyName);
         initialiserrecyclerView();
         afficherTouteLesOffre();
         AllerAlaPagePourPostUneOffre();
@@ -150,7 +163,8 @@ public class  HomePage extends AppCompatActivity {
      }
     }
     private void getEtudiants() {
-
+        Context context = HomePage.this;
+//        nomEtudiant.setTextColor(Color.red);
         client.getComptesEleves(ConnectUtils.authToken).enqueue(
                 new Callback<List<ComptePOJO>>() {
                     @Override
@@ -212,7 +226,7 @@ public class  HomePage extends AppCompatActivity {
                  for(Entreprise entreprise : etudiant.getEntreprises()){
                      listeEntreprises.add(new Entreprise(entreprise.getId(),entreprise.getNom(),entreprise.getContact(),entreprise.getEmail(),
                              entreprise.getTelephone(),entreprise.getSiteWeb(),entreprise.getAdresse(),entreprise.getVille(),
-                             "",entreprise.getCodePostal(),"",entreprise.getEstFavorite(),""));
+                             "",entreprise.getCodePostal(),"",entreprise.getEstFavorite()));
                  }
              }
          }

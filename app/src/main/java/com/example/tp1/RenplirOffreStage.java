@@ -110,7 +110,7 @@ public class RenplirOffreStage extends AppCompatActivity {
 
                 Entreprise entreprise = new Entreprise(id,nomCompanyEnString,contactEnString,
                         emailEnString,telephoneEnString,UrlEnString,AdresseEnString,
-                        VilleEnString,"",PostalCodeEnString,"",false,ConnectUtils.authId);
+                        VilleEnString,"",PostalCodeEnString,"",false);
                 client.creerEntreprise(ConnectUtils.authToken,entreprise).enqueue(new Callback<Entreprise>(){
 
                     @Override
@@ -118,6 +118,7 @@ public class RenplirOffreStage extends AppCompatActivity {
                         if (response.isSuccessful()) {
 
                             Log.d("tag","ajout d'entreprise reussi");
+                            Toast.makeText(RenplirOffreStage.this,"mets a jour",Toast.LENGTH_SHORT).show();
                        //      ajouterLentrepriseALetudiant(entreprise);
                         }
                     }

@@ -1,6 +1,7 @@
 package com.example.tp1;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ public class adapterEtudiant extends RecyclerView.Adapter<adapterEtudiant.MyView
 
 
     private Context context;
+    @NonNull ViewGroup parent;
 
 
     private ArrayList<ComptePOJO> listeEtudiants;
@@ -37,10 +39,23 @@ public class adapterEtudiant extends RecyclerView.Adapter<adapterEtudiant.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+
         ComptePOJO model = listeEtudiants.get(position);
+
+        model.setStageTrouver(true);
+        if(model.getStageTrouver()){
+            holder.nom.setTextColor(Color.RED);
+            holder.nom.setText(model.getNom());
+            holder.prenom.setText(model.getPrenom());
+            return;
+        }
         holder.nom.setText(model.getNom());
         holder.prenom.setText(model.getPrenom());
+    }
 
+    public void changerLayout(){
+        View view = LayoutInflater.from(context).inflate(R.layout.designe_recyclervew2,parent,false);
+       new adapterEtudiant.MyViewHolder(view);
     }
 
 

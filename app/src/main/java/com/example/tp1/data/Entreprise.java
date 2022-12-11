@@ -44,9 +44,6 @@ public class Entreprise implements Serializable
     @SerializedName("estFavorite")
     @Expose
     private Boolean estFavorite;
-    @SerializedName("id_etudiant")
-    @Expose
-    private String id_etudiant;
 
     private final static long serialVersionUID = 2797931101594408890L;
 
@@ -71,7 +68,7 @@ public class Entreprise implements Serializable
      * @param nom
      * @param email
      */
-    public Entreprise(String id, String nom, String contact, String email, String telephone, String siteWeb, String adresse, String ville, String province, String codePostal, Object dateContact, Boolean estFavorite,String id_etudiant) {
+    public Entreprise(String id, String nom, String contact, String email, String telephone, String siteWeb, String adresse, String ville, String province, String codePostal, Object dateContact, Boolean estFavorite) {
         super();
         this.id = id;
         this.nom = nom;
@@ -85,16 +82,9 @@ public class Entreprise implements Serializable
         this.codePostal = codePostal;
         this.dateContact = dateContact;
         this.estFavorite = estFavorite;
-        this.id_etudiant = id_etudiant;
+
     }
 
-    public void setId_etudiant(String id_etudiant) {
-        this.id_etudiant = id_etudiant;
-    }
-
-    public String getId_etudiant() {
-        return id_etudiant;
-    }
 
     public String getId() {
         return id;

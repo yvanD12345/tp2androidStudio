@@ -22,6 +22,9 @@ public class ComptePOJO implements Serializable
     @SerializedName("email")
     @Expose
     private String email;
+    @SerializedName("stageTrouver")
+    @Expose
+    private Boolean stageTrouver;
     @SerializedName("typeCompte")
     @Expose
     private TypeCompte typeCompte;
@@ -71,6 +74,14 @@ public class ComptePOJO implements Serializable
     }
     public void supprimerUneEntreprise(Entreprise entreprise){
         this.entreprises.remove(entreprise);
+    }
+
+    public Boolean getStageTrouver() {
+        return stageTrouver;
+    }
+
+    public void setStageTrouver(Boolean stageTrouver) {
+        this.stageTrouver = stageTrouver;
     }
 
     public String getId() {

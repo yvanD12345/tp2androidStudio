@@ -6,7 +6,7 @@
     app:cardElevation="12dp"
     app:cardCornerRadius="16dp"
     android:layout_margin="16dp"
-    app:cardBackgroundColor="#108CEA">
+    app:cardBackgroundColor="#00877A">
 
 
         <LinearLayout
@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:orientation="vertical"
-            android:background="#FFFFFFFF"
+            android:background="#03A9F4"
 
             ><RelativeLayout
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@id/idIVCourseImage"
                     android:text="CompanyName"
-                    android:textColor="#108CEA"
+                    android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 

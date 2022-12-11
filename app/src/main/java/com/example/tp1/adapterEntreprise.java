@@ -2,6 +2,7 @@ package com.example.tp1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ public class adapterEntreprise extends RecyclerView.Adapter<adapterEntreprise.My
 
 
     private ArrayList<Entreprise> entreprises;
-    private int checkedPosition = 0;//
+    private int checkedPosition = 0;
 
     public adapterEntreprise(Context context, ArrayList<Entreprise> entreprises) {
         this.context = context;

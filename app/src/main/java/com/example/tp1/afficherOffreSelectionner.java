@@ -80,38 +80,85 @@ public class afficherOffreSelectionner extends AppCompatActivity {
           //prend les elements des inputs et update l'offre avec les elements entrer
 
         supprimerUneCompanie(companyName.getText().toString());
+
     }
 
  */
+        supprimerUneCompanie();
         initialiserLesChamps();
 
     }
     public void mettreAJourEntreprise(){
+        Entreprise entrepriseTemp = initialiserUneNouvelleEntreprise();
         Bundle extras = getIntent().getExtras();
         bouttonUpdate = findViewById(R.id.buttonUpdate);
         bouttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String urlVerif;
+                String urlVerif = "";
                 urlVerif = verifierUrl(url.getText().toString());
-                Entreprise entreprise = new Entreprise(extras.getString("id"),Contact.getText().toString(),
-                        email.getText().toString(),telephone.getText().toString(),urlVerif,adresse.getText().toString(),
-                        ville.getText().toString(),ville.getText().toString(),"",postalCode.getText().toString(),"",false,"");
-                client.modifierEntreprise(ConnectUtils.authToken, extras.getString("id"),entreprise).enqueue(new Callback<Entreprise>() {
+                initialiserDictionnaire(urlVerif);
+                Entreprise entreprisePourLaMofication = updateEntrepriseTemp(entrepriseTemp,dictionnaireDonner);
+                Log.d("TAG","CONTACT new entreprise "+Contact.getText().toString()+ "ville "+ville.getText().toString());
+
+                client.modifierEntreprise(ConnectUtils.authToken, extras.getString("id"),entreprisePourLaMofication).enqueue(new Callback<Entreprise>() {
                     @Override
                     public void onResponse(Call<Entreprise> call, Response<Entreprise> response) {
                         if(response.isSuccessful()){
                             Log.d("TAG","yata man");
+                            Toast.makeText(afficherOffreSelectionner.this,"mets a jour",Toast.LENGTH_SHORT).show();
+                            Log.d("TAG"," mis a jour");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Entreprise> call, Throwable t) {
-
+                        Toast.makeText(afficherOffreSelectionner.this,"mets pas a jour",Toast.LENGTH_SHORT).show();
+                        Log.d("TAG","pas de mis a jour");
                     }
                 });
             }
         });
+    }
+    public Entreprise updateEntrepriseTemp(Entreprise entreprise, Map<String,String> valueInput ){
+        for (String key : valueInput.keySet()) {
+            switch(key){
+                case "contact": if(!valueInput.get(key).equals("")){entreprise.setContact(Contact.getText().toString());}
+                    break;
+                case "email": if(!valueInput.get(key).equals("")){entreprise.setEmail(email.getText().toString());}
+                    break;
+                case "ville": if(!valueInput.get(key).equals("")){entreprise.setVille(ville.getText().toString());}
+                    break;
+                case "postalCode": if(!valueInput.get(key).equals("")){entreprise.setCodePostal(postalCode.getText().toString());}
+                    break;
+                case "adresse": if(!valueInput.get(key).equals("")){entreprise.setAdresse(adresse.getText().toString());}
+                    break;
+                case "telephone": if(!valueInput.get(key).equals("")){entreprise.setTelephone(telephone.getText().toString());}
+                    break;
+                case "url": if(!valueInput.get(key).equals("")){entreprise.setSiteWeb(url.getText().toString());}
+                    break;
+
+            }
+        }
+        return entreprise;
+    }
+    public void initialiserDictionnaire(String urlVerif){
+        dictionnaireDonner.put("contact", Contact.getText().toString());
+        dictionnaireDonner.put("companyName", nom.getText().toString());
+        dictionnaireDonner.put("email",  email.getText().toString());
+        dictionnaireDonner.put("ville", ville.getText().toString());
+        dictionnaireDonner.put("adresse", adresse.getText().toString());
+        dictionnaireDonner.put("telephone", telephone.getText().toString());
+        dictionnaireDonner.put("postalCode", postalCode.getText().toString());
+        dictionnaireDonner.put("url", urlVerif);
+    }
+    public Entreprise initialiserUneNouvelleEntreprise(){
+        Bundle extras = getIntent().getExtras();
+      Entreprise entreprise = new Entreprise(extras.getString("id"),extras.getString("nom"), extras.getString("Contact")
+              ,extras.getString("email"),extras.getString("telephone"),extras.getString("url"),
+              extras.getString("adresse"),extras.getString("ville"),"",extras.getString("postalCode"),null,false);
+
+      return entreprise;
     }
     public void initialiserLesChamps(){
         Bundle extras = getIntent().getExtras();
@@ -213,7 +260,7 @@ public class afficherOffreSelectionner extends AppCompatActivity {
 
 
     }
-    public void supprimerUneCompanie(String nomCompanie){
+  /*  public void supprimerUneCompanie(String nomCompanie){
         bouttonSupprimerCompanie = findViewById(R.id.buttonSuppression);
 
         bouttonSupprimerCompanie.setOnClickListener(new View.OnClickListener() {
@@ -226,6 +273,28 @@ public class afficherOffreSelectionner extends AppCompatActivity {
             else {
                 Toast.makeText(afficherOffreSelectionner.this,"entreprise a été supprimer",Toast.LENGTH_SHORT).show();
             }
+            }
+        });
+    }*/
+    public void supprimerUneCompanie(){
+        Bundle extras = getIntent().getExtras();
+        bouttonSupprimerCompanie = findViewById(R.id.buttonSuppression);
+        bouttonSupprimerCompanie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                client.supprEntreprise(ConnectUtils.authToken,extras.getString("id")).enqueue(new Callback<Entreprise>() {
+                    @Override
+                    public void onResponse(Call<Entreprise> call, Response<Entreprise> response) {
+                        Toast.makeText(afficherOffreSelectionner.this,"entreprise supprimer",Toast.LENGTH_SHORT).show();
+                        Log.d("TAG"," entreprise supprimer");
+                    }
+
+                    @Override
+                    public void onFailure(Call<Entreprise> call, Throwable t) {
+                        Toast.makeText(afficherOffreSelectionner.this,"entreprise toujours la",Toast.LENGTH_SHORT).show();
+                        Log.d("TAG","entreprise toujour la");
+                    }
+                });
             }
         });
     }
