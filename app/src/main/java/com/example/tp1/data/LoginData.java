@@ -10,4 +10,5 @@ public class LoginData implements Serializable {
         this.email = email;
         this.mot_de_passe = mot_de_passe;
     }
+
 }

@@ -110,11 +110,12 @@ public class page_de_connexion extends AppCompatActivity {
                     ConnectUtils.authToken = json.getAccessToken();
                     ConnectUtils.authId = json.getId();
                     ConnectUtils.authTypeUtilisateur = json.getTypeCompte();
+
                     Intent connexion = new Intent(page_de_connexion.this,HomePage.class);
                     String[] myStrings = new String[] {userEntrer,mdpEntrer};
                     connexion.putExtra("strings", myStrings);
                     startActivity(connexion);
-                    Log.d("tag", "connexion faite");
+                    Log.d("tag", "connexion par l'id"+json.getId());
                 }
             }
 

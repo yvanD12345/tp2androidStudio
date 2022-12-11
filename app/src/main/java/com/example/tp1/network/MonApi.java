@@ -53,7 +53,7 @@ public interface MonApi {
 
     //recuperer etudiant connecter
     @GET("/compte/getetudiant")
-    Call<List<ComptePOJO>> getEtudiantConnecte(@Header("Authorization") String token);
+    Call<ComptePOJO> getEtudiantConnecte(@Header("Authorization") String token);
 
 
     // recuperer les comptes etudiants

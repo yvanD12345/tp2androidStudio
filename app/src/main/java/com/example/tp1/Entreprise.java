@@ -1,6 +1,6 @@
 package com.example.tp1;
 
-public class OffreStageListModel {
+public class Entreprise {
     //ceci est le modele pour l'offre de stage
  private String nomCompanie;
  private String email;
@@ -14,7 +14,7 @@ public class OffreStageListModel {
  private int id_company;
 
 
- public OffreStageListModel(String nomCompanie, String email, String contact, int telephone, String codePostal, String adresse, String ville, String poste, String url){
+ public Entreprise(String nomCompanie, String email, String contact, int telephone, String codePostal, String adresse, String ville, String poste, String url){
      this.nomCompanie = nomCompanie;
      this.email = email;
      this.contact = contact;
@@ -25,7 +25,7 @@ public class OffreStageListModel {
      this.telephone = telephone;
      this.url = url;
  }
-    public OffreStageListModel(String nomCompanie, String poste){
+    public Entreprise(String nomCompanie, String poste){
         this.nomCompanie = nomCompanie;
 
         this.poste = poste;
@@ -49,6 +49,10 @@ public class OffreStageListModel {
     public int getTelephone(){return telephone;}
 
     public String getAdresse(){return adresse;}
+
+    public String getUrl() {
+        return url;
+    }
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;

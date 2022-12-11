@@ -5,24 +5,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.SearchView;
 
 import com.example.tp1.bds.DBHelper;
 import com.example.tp1.data.ComptePOJO;
-import com.example.tp1.data.CompteResult;
-import com.example.tp1.data.ConnexionUtilisateur;
-import com.example.tp1.data.LoginData;
 import com.example.tp1.network.ConnectUtils;
 import com.example.tp1.network.MonAPIClient;
 import com.example.tp1.network.MonApi;
+import com.example.tp1.data.Entreprise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +29,21 @@ import retrofit2.Response;
 
 public class  HomePage extends AppCompatActivity {
    DBHelper Tp1bd;
-   EditText elementRechercher;
-   TextView bouttonRechercher;
+   SearchView elementRechercher;
    Button bouttonDeco;
    ImageView bouttonMap, bouttonAjouterOffre;
     RecyclerView recyclerView;
-    ArrayList<OffreStageListModel> listOffre;
+    RecyclerView recyclerViewEtudiant;
+    ArrayList<Entreprise> listeEntreprises;
+    ArrayList<ComptePOJO> listeEtudiants;
+
+
     private  boolean mLocationPermissionGranted= false;
 
-    adapter leAdapter;
+    adapterEntreprise leAdapterEntreprise;
+    adapterEtudiant leAdapterEtudiant;
 
-    private MonApi client =   MonAPIClient.getRetrofit().create(MonApi.class);;
+    private MonApi client =   MonAPIClient.getRetrofit().create(MonApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,33 +53,45 @@ public class  HomePage extends AppCompatActivity {
 
         Tp1bd = new DBHelper(this);
 
-         listOffre  = new ArrayList<OffreStageListModel>();
+        listeEntreprises = new ArrayList<Entreprise>();
+        listeEtudiants = new ArrayList<ComptePOJO>();
         recyclerView = findViewById(R.id.recyclerview);
-        leAdapter = new adapter(this,listOffre);
-        recyclerView.setAdapter(leAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        recyclerViewEtudiant = findViewById(R.id.recyclerview);
+        initialiserrecyclerView();
         afficherTouteLesOffre();
         AllerAlaPagePourPostUneOffre();
         lancerUneRecherche();
         afficherLaCarte();
-     //   deconnexionUser();
+        deconnexionUser();
 
+    }
+    private void initialiserrecyclerView(){
+        if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT){
+            leAdapterEntreprise = new adapterEntreprise(this, listeEntreprises);
+            recyclerView.setAdapter(leAdapterEntreprise);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
+        else if (ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.PROFESSEUR){
+            leAdapterEtudiant = new adapterEtudiant(this,listeEtudiants);
+            recyclerView.setAdapter(leAdapterEtudiant);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
     }
     //permet rechercher une offre dans la barre mais elle n'est pas encore fonctionnel
     private void lancerUneRecherche(){
-        elementRechercher = findViewById(R.id.inputRecherche);
-        bouttonRechercher = findViewById(R.id.researchButton);
-        bouttonRechercher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                elementRechercher = findViewById(R.id.inputRecherche);
-                String sRecherche = elementRechercher.getText().toString();
-                Intent lancerRecherche = new Intent( HomePage.this,resultatsRechercheOffre.class);
-                lancerRecherche.putExtra("key", sRecherche);
-                startActivity(lancerRecherche);
-            }
-        });
+        elementRechercher = findViewById(R.id.barreDeRecherche);
+       elementRechercher.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+           @Override
+           public boolean onQueryTextSubmit(String query) {
+               return false;
+           }
+
+           @Override
+           public boolean onQueryTextChange(String newText) {
+                effectuerUneRecherche(newText);
+               return true;
+           }
+       });
 
     }
     //lance le google map activity en cliquant sur la carte
@@ -98,18 +109,45 @@ public class  HomePage extends AppCompatActivity {
         });
     }
 
-
+    private void effectuerUneRecherche(String recherche){
+        if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT){
+            rechercherEntreprise(recherche);
+        }
+        else if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.PROFESSEUR){
+            rechercherEtudiant(recherche);
+        }
+    }
 
     private void afficherTouteLesOffre() {
         //cherche dans la bd toute les offre
-     getEtudiants();
+        if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT){
+          getEntreprise();
+        }
+        else if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.PROFESSEUR){
+            getEtudiants();
+        }
+
+
     }
 
-    private void affichageEleve(){
-
+    private void rechercherEntreprise(String recherche){
+        ArrayList<Entreprise> listTemp = new ArrayList<Entreprise>();
+        for(Entreprise entreprise : listeEntreprises){
+            if(entreprise.getNom().toLowerCase().contains(recherche.toLowerCase())){
+                listTemp.add(entreprise);
+            }
+        }
+        if(!listTemp.isEmpty()){
+            leAdapterEntreprise.changerEffectuer(listTemp);
+        }
     }
-    private void affichageEntreprise(){
-
+    private void rechercherEtudiant(String recherche){
+     ArrayList<ComptePOJO> listTemp = new ArrayList<ComptePOJO>();
+     for(ComptePOJO etudiant : listeEtudiants){
+         if(etudiant.getNom().toLowerCase().contains(recherche.toLowerCase())){
+             listTemp.add(etudiant);
+         }
+     }
     }
     private void getEtudiants() {
 
@@ -123,7 +161,7 @@ public class  HomePage extends AppCompatActivity {
                             List<ComptePOJO> comptes = response.body();
                             for (ComptePOJO compte : comptes) {
                                 Log.d("tag","testons"+compte.getEmail()+" "+compte.getNom());
-                                listOffre.add(new OffreStageListModel(compte.getEmail(),compte.getNom())) ;
+                                listeEtudiants.add(new ComptePOJO(compte.getNom(),compte.getPrenom())) ;
                             }
 
                         }
@@ -138,40 +176,62 @@ public class  HomePage extends AppCompatActivity {
         );
 
     }
-/*
+    private void getEntreprise(){
+
+ /*   client.lireEntreprises(ConnectUtils.authToken).enqueue(
+            new Callback<List<Entreprise>>() {
+                @Override
+                public void onResponse(Call<List<Entreprise>> call, Response<List<Entreprise>> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("tag", "voic l'id de ce dernier "+ConnectUtils.authId);
+                        List<Entreprise> lesEntreprises = response.body();
+                        for(Entreprise entreprise : lesEntreprises){
+                            if(entreprise.getId_etudiant()!= null){
+                                if(entreprise.getId_etudiant().equals(ConnectUtils.authId)){
+                                    listOffre.add(new OffreStageListModel(entreprise.getNom(),entreprise.getEmail()));
+                                }
+                            }
+
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Entreprise>> call, Throwable t) {
+
+                }
+            }
+    );*/
+     client.getEtudiantConnecte(ConnectUtils.authToken).enqueue(new Callback<ComptePOJO>() {
+         @Override
+         public void onResponse(Call<ComptePOJO> call, Response<ComptePOJO> response) {
+             if(response.isSuccessful()){
+                 Log.d("tag","yess");
+                 ComptePOJO etudiant = response.body();
+                 for(Entreprise entreprise : etudiant.getEntreprises()){
+                     listeEntreprises.add(new Entreprise(entreprise.getId(),entreprise.getNom(),entreprise.getContact(),entreprise.getEmail(),
+                             entreprise.getTelephone(),entreprise.getSiteWeb(),entreprise.getAdresse(),entreprise.getVille(),
+                             "",entreprise.getCodePostal(),"",entreprise.getEstFavorite(),""));
+                 }
+             }
+         }
+
+         @Override
+         public void onFailure(Call<ComptePOJO> call, Throwable t) {
+
+         }
+     });
+    }
+
     private void deconnexionUser(){
-        bouttonDeco = findViewById(R.id.buttonDeco);
+        bouttonDeco = findViewById(R.id.button);
         bouttonDeco.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                client = MonAPIClient.getRetrofit().create(MonApi.class);
-
-                ConnexionUtilisateur user = new ConnexionUtilisateur();
-                user.setId_compte(ConnectUtils.authId);
-                client.testerConnexion(ConnectUtils.authToken, user.getId_compte()).enqueue(
-                        new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (!response.isSuccessful()) {
 
 
-                                }
-                                else if(response.isSuccessful()){
-                                    deconnexion();
-                                }
-                                else {
-
-
-
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        }
-                );
+                deconnexion();
             }
         });
     }
@@ -182,8 +242,10 @@ public class  HomePage extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-             Intent deco = new Intent(HomePage.this,page_de_connexion.class);
-             startActivity(deco);
+                if(response.isSuccessful()){
+                    Log.d("tag","chu deco");
+                    finish();
+                }
             }
 
             @Override
@@ -192,7 +254,7 @@ public class  HomePage extends AppCompatActivity {
             }
         });
     }
-*/
+
     private void AllerAlaPagePourPostUneOffre() {
         bouttonAjouterOffre = findViewById(R.id.buttonAddOffre);
         bouttonAjouterOffre.setOnClickListener(new View.OnClickListener() {

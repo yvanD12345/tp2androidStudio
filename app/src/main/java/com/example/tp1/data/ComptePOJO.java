@@ -24,10 +24,17 @@ public class ComptePOJO implements Serializable
     private String email;
     @SerializedName("typeCompte")
     @Expose
-    private TypeUtilisateur typeCompte;
+    private TypeCompte typeCompte;
+
+    public enum TypeCompte {
+        ADMINISTRATEUR,
+        PROFESSEUR,
+        ETUDIANT
+    }
     @SerializedName("entreprises")
     @Expose
     private List<Entreprise> entreprises = null;
+
     private final static long serialVersionUID = -1412352379743458039L;
 
     /**
@@ -35,6 +42,10 @@ public class ComptePOJO implements Serializable
      *
      */
     public ComptePOJO() {
+    }
+    public ComptePOJO(String nom, String prenom){
+        this.nom = nom;
+        this.prenom = prenom;
     }
 
     /**
@@ -46,7 +57,7 @@ public class ComptePOJO implements Serializable
      * @param prenom
      * @param email
      */
-    public ComptePOJO(String id, String nom, String prenom, String email, TypeUtilisateur typeCompte, List<Entreprise> entreprises) {
+    public ComptePOJO(String id, String nom, String prenom, String email, TypeCompte typeCompte, List<Entreprise> entreprises) {
         super();
         this.id = id;
         this.nom = nom;
@@ -54,6 +65,12 @@ public class ComptePOJO implements Serializable
         this.email = email;
         this.typeCompte = typeCompte;
         this.entreprises = entreprises;
+    }
+    public void ajouterUneEntreprise(Entreprise entreprise){
+        this.entreprises.add(entreprise);
+    }
+    public void supprimerUneEntreprise(Entreprise entreprise){
+        this.entreprises.remove(entreprise);
     }
 
     public String getId() {
@@ -88,11 +105,11 @@ public class ComptePOJO implements Serializable
         this.email = email;
     }
 
-    public TypeUtilisateur getTypeCompte() {
+    public TypeCompte getTypeCompte() {
         return typeCompte;
     }
 
-    public void setTypeCompte(TypeUtilisateur typeCompte) {
+    public void setTypeCompte(TypeCompte typeCompte) {
         this.typeCompte = typeCompte;
     }
 
@@ -116,8 +133,5 @@ public class ComptePOJO implements Serializable
                 '}';
     }
 
-    public enum TypeUtilisateur {
-        PROFESSEUR,
-        ETUDIANT
-    }
+
 }

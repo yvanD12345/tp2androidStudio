@@ -1,6 +1,5 @@
 package com.example.tp1.data;
 
-import com.example.tp1.data.ComptePOJO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -23,7 +22,7 @@ public class CompteResult implements Serializable
     private String email;
     @SerializedName("type_compte")
     @Expose
-    private ComptePOJO.TypeUtilisateur typeCompte;
+    private ComptePOJO.TypeCompte typeCompte;
     @SerializedName("access_token")
     @Expose
     private String accessToken;
@@ -49,7 +48,7 @@ public class CompteResult implements Serializable
      * @param email
      * @param expiresAt
      */
-    public CompteResult(String id, String nom, String prenom, String email, ComptePOJO.TypeUtilisateur typeCompte, String accessToken) {
+    public CompteResult(String id, String nom, String prenom, String email, ComptePOJO.TypeCompte typeCompte, String accessToken) {
         super();
         this.id = id;
         this.nom = nom;
@@ -91,11 +90,11 @@ public class CompteResult implements Serializable
         this.email = email;
     }
 
-    public ComptePOJO.TypeUtilisateur getTypeCompte() {
+    public ComptePOJO.TypeCompte getTypeCompte() {
         return typeCompte;
     }
 
-    public void setTypeCompte(ComptePOJO.TypeUtilisateur typeCompte) {
+    public void setTypeCompte(ComptePOJO.TypeCompte typeCompte) {
         this.typeCompte = typeCompte;
     }
 

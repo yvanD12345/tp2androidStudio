@@ -110,7 +110,7 @@ public class RenplirOffreStage extends AppCompatActivity {
 
                 Entreprise entreprise = new Entreprise(id,nomCompanyEnString,contactEnString,
                         emailEnString,telephoneEnString,UrlEnString,AdresseEnString,
-                        VilleEnString,"",PostalCodeEnString,"",false);
+                        VilleEnString,"",PostalCodeEnString,"",false,ConnectUtils.authId);
                 client.creerEntreprise(ConnectUtils.authToken,entreprise).enqueue(new Callback<Entreprise>(){
 
                     @Override
@@ -118,6 +118,7 @@ public class RenplirOffreStage extends AppCompatActivity {
                         if (response.isSuccessful()) {
 
                             Log.d("tag","ajout d'entreprise reussi");
+                       //      ajouterLentrepriseALetudiant(entreprise);
                         }
                     }
 
@@ -127,6 +128,23 @@ public class RenplirOffreStage extends AppCompatActivity {
                     }
                 });
             }
+          /*  public void ajouterLentrepriseALetudiant(Entreprise entreprise){
+                client.getEtudiantConnecte(ConnectUtils.authToken).enqueue(new Callback<List<ComptePOJO>>() {
+                    @Override
+                    public void onResponse(Call<List<ComptePOJO>> call, Response<List<ComptePOJO>> response) {
+                        if(response.isSuccessful()){
+                            List<ComptePOJO> etudiant = response.body();
+                            Log.d("tag","voici le nombre d'etudiant trouver"+" "+etudiant.size());
+                            etudiant.get(0).ajouterUneEntreprise(entreprise);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<ComptePOJO>> call, Throwable t) {
+                        Log.d("tag","echec");
+                    }
+                });
+            }*/
 
 //creer l'adresse à partir de la concatenation de la rue , nom de rue et la ville
             public String concatenationAdresse(){
