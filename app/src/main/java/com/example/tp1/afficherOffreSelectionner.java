@@ -48,9 +48,6 @@ public class afficherOffreSelectionner extends AppCompatActivity {
 
         Tp1bd = new DBHelper(this);
 
-     //   String nom = extras.getString("companyName");
-
-     //   Cursor resultatDeLaRecherche = Tp1bd.RechercherCompanie(nom);
         Contact = findViewById(R.id.inputContact);
         nom = findViewById(R.id.updateOffer);
         email = findViewById(R.id.inputCourriell);
@@ -64,30 +61,17 @@ public class afficherOffreSelectionner extends AppCompatActivity {
         envoyerMail();
         allerSurSite();
         appeler();
-      //  mettreAJourCompanie(nom);
+
         mettreAJourEntreprise();
-/*
-        while (resultatDeLaRecherche.moveToNext()) {
-            Contact.setHint(resultatDeLaRecherche.getString(3));
-            email.setHint(resultatDeLaRecherche.getString(2));
-            companyName.setText(resultatDeLaRecherche.getString(1));
-            ville.setHint(resultatDeLaRecherche.getString(5));
-            postalCode.setHint(resultatDeLaRecherche.getString(6));
-            adresse.setHint(resultatDeLaRecherche.getString(7));
-            telephone.setHint(resultatDeLaRecherche.getString(8));
-            url.setHint(resultatDeLaRecherche.getString(9));
 
-          //prend les elements des inputs et update l'offre avec les elements entrer
-
-        supprimerUneCompanie(companyName.getText().toString());
-
-    }
-
- */
         supprimerUneCompanie();
         initialiserLesChamps();
 
     }
+    /**
+     * sert à mettre à jour l'entreprise lorsque le boutton est sélectionner
+     * @param
+     */
     public void mettreAJourEntreprise(){
         Entreprise entrepriseTemp = initialiserUneNouvelleEntreprise();
         Bundle extras = getIntent().getExtras();
@@ -99,27 +83,34 @@ public class afficherOffreSelectionner extends AppCompatActivity {
                 urlVerif = verifierUrl(url.getText().toString());
                 initialiserDictionnaire(urlVerif);
                 Entreprise entreprisePourLaMofication = updateEntrepriseTemp(entrepriseTemp,dictionnaireDonner);
-                Log.d("TAG","CONTACT new entreprise "+Contact.getText().toString()+ "ville "+ville.getText().toString());
+
 
                 client.modifierEntreprise(ConnectUtils.authToken, extras.getString("id"),entreprisePourLaMofication).enqueue(new Callback<Entreprise>() {
                     @Override
                     public void onResponse(Call<Entreprise> call, Response<Entreprise> response) {
                         if(response.isSuccessful()){
-                            Log.d("TAG","yata man");
+
                             Toast.makeText(afficherOffreSelectionner.this,"mets a jour",Toast.LENGTH_SHORT).show();
-                            Log.d("TAG"," mis a jour");
+
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Entreprise> call, Throwable t) {
                         Toast.makeText(afficherOffreSelectionner.this,"mets pas a jour",Toast.LENGTH_SHORT).show();
-                        Log.d("TAG","pas de mis a jour");
+
                     }
                 });
             }
         });
     }
+
+    /**
+     * Cette  methode retourne une entreprise temporaire qui elle va etre modifier en fonction de ce que l'utilisateur aura entrer et cette entreprise sera utiliser pour la mise a jour
+     * @param entreprise est l'entreprise temporaire qui va etre changer puis retourner
+     * @param valueInput contient le dictionnaireDonnee qui lui contient le contenue de tous les inputs de l'activité
+     * @return une entreprise temporaire qui sera utiliser pour la mise à jour de l'entreprise dans le serveur distant
+     */
     public Entreprise updateEntrepriseTemp(Entreprise entreprise, Map<String,String> valueInput ){
         for (String key : valueInput.keySet()) {
             switch(key){
@@ -142,6 +133,11 @@ public class afficherOffreSelectionner extends AppCompatActivity {
         }
         return entreprise;
     }
+
+    /**
+     * initialise un dictionnaire qui va contenir toutes les valeurs de tous champs de l'activité
+     * @param urlVerif est le string contenant le siteweb
+     */
     public void initialiserDictionnaire(String urlVerif){
         dictionnaireDonner.put("contact", Contact.getText().toString());
         dictionnaireDonner.put("companyName", nom.getText().toString());
@@ -152,6 +148,10 @@ public class afficherOffreSelectionner extends AppCompatActivity {
         dictionnaireDonner.put("postalCode", postalCode.getText().toString());
         dictionnaireDonner.put("url", urlVerif);
     }
+    /**
+     * sert à retourner une entreprise temporaire avec les infos de l'entreprise qui avait été selectionner dans l'activité précédente
+     * @param
+     */
     public Entreprise initialiserUneNouvelleEntreprise(){
         Bundle extras = getIntent().getExtras();
       Entreprise entreprise = new Entreprise(extras.getString("id"),extras.getString("nom"), extras.getString("Contact")
@@ -160,6 +160,11 @@ public class afficherOffreSelectionner extends AppCompatActivity {
 
       return entreprise;
     }
+
+    /**
+     * sert a initialiser le hint des editext avec les infos de l'entreprise
+     * @param
+     */
     public void initialiserLesChamps(){
         Bundle extras = getIntent().getExtras();
         Log.d("TAG","voici extra"+" contact"+extras.getString("contact")+" site web"+extras.getString("telephone"));
@@ -172,36 +177,14 @@ public class afficherOffreSelectionner extends AppCompatActivity {
        postalCode.setHint(extras.getString("postalCode"));
        Contact.setHint(extras.getString("Contact"));
     }
-//mettre à jour la companie sellectionnner
-    public void mettreAJourCompanie(String nom){
-        bouttonUpdate = findViewById(R.id.buttonUpdate);
-        bouttonUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String urlVerif;
-                urlVerif = verifierUrl(url.getText().toString());
-                /*
-                dictionnaireDonner.put("contact", Contact.getText().toString());
-                dictionnaireDonner.put("companyName", companyName.getText().toString());
-                dictionnaireDonner.put("email",  email.getText().toString());
-                dictionnaireDonner.put("ville", ville.getText().toString());
-                dictionnaireDonner.put("adresse", adresse.getText().toString());
-                dictionnaireDonner.put("telephone", telephone.getText().toString());
-                dictionnaireDonner.put("postalCode", postalCode.getText().toString());
-                dictionnaireDonner.put("url", urlVerif);
-                if(Tp1bd.updateCompanie(dictionnaireDonner,nom)){
-                    Toast.makeText(afficherOffreSelectionner.this, "l'update a été faite", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(afficherOffreSelectionner.this, "l'update n'a pas été faite", Toast.LENGTH_SHORT).show();
-                }
 
-                 */
 
-            }
-        });
-    }
-//retourne vide si l'url n'est pas conforme et n'update rien si c'est vide
+
+    /**
+     * verifie l'url entrer
+     * @param inputurl est l'url entrer par l'utilisateur
+     * @return un string vide
+     */
     public String verifierUrl(String inputurl) {
         if (inputurl.contains("https://")) {
             return inputurl;
@@ -209,7 +192,11 @@ public class afficherOffreSelectionner extends AppCompatActivity {
             return "";
         }
     }
-//appler la companie
+
+
+    /**
+     * permet d'appeler avec les infos de l'entreprise
+     */
     public void appeler(){
 
         bouttonAppel = findViewById(R.id.appeler);
@@ -226,7 +213,11 @@ public class afficherOffreSelectionner extends AppCompatActivity {
 
     }
 
-//envoyer un mail à la companie
+
+
+    /**
+     * ouvre gmail avec le mail de l'entreprise
+     */
     public void envoyerMail(){
         bouttonMail = findViewById(R.id.envoiEmail);
         bouttonMail.setOnClickListener(new View.OnClickListener() {
@@ -241,7 +232,11 @@ public class afficherOffreSelectionner extends AppCompatActivity {
         });
 
     }
-    //aller sur le site de la companie
+
+
+    /**
+     * permet d'aller sur le site web de l'entreprise
+     */
     public void allerSurSite(){
         bouttonWeb = findViewById(R.id.pageWeb);
         bouttonWeb.setOnClickListener(new View.OnClickListener() {
@@ -260,22 +255,10 @@ public class afficherOffreSelectionner extends AppCompatActivity {
 
 
     }
-  /*  public void supprimerUneCompanie(String nomCompanie){
-        bouttonSupprimerCompanie = findViewById(R.id.buttonSuppression);
 
-        bouttonSupprimerCompanie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean suppressionEffectuer = Tp1bd.supprimerUneCompanie(nomCompanie);
-            if( suppressionEffectuer){
-                Toast.makeText(afficherOffreSelectionner.this,"entreprise n'a pas été supprimer",Toast.LENGTH_SHORT).show();
-            }
-            else {
-                Toast.makeText(afficherOffreSelectionner.this,"entreprise a été supprimer",Toast.LENGTH_SHORT).show();
-            }
-            }
-        });
-    }*/
+    /**
+     * permet de supprimer une entreprise avec l'id de cette derniere
+     */
     public void supprimerUneCompanie(){
         Bundle extras = getIntent().getExtras();
         bouttonSupprimerCompanie = findViewById(R.id.buttonSuppression);

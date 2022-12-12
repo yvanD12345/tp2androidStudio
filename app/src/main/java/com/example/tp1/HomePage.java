@@ -6,17 +6,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.tp1.bds.DBHelper;
 import com.example.tp1.data.ComptePOJO;
@@ -37,8 +34,9 @@ public class  HomePage extends AppCompatActivity {
    DBHelper Tp1bd;
    SearchView elementRechercher;
    TextView nomEtudiant ;
-   Button bouttonDeco;
+   Button bouttonDeco, bouttonStageTrouver;
    ImageView bouttonMap, bouttonAjouterOffre, imagePourStage;
+   ToggleButton bouttonActiverFiltreFav;
     RecyclerView recyclerView;
     RecyclerView recyclerViewEtudiant;
     ArrayList<Entreprise> listeEntreprises;
@@ -56,11 +54,7 @@ public class  HomePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-      /*  LayoutInflater inflater = (LayoutInflater) HomePage.this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        ViewGroup view = (ViewGroup) findViewById(android.R.id.content);
-        View layout = inflater.inflate(R.layout.designe_recyclervew2, null);
 
-        TextView text = (TextView) layout.findViewById(R.id.companyName);*/
 
         Tp1bd = new DBHelper(this);
 
@@ -68,16 +62,69 @@ public class  HomePage extends AppCompatActivity {
         listeEtudiants = new ArrayList<ComptePOJO>();
         recyclerView = findViewById(R.id.recyclerview);
         recyclerViewEtudiant = findViewById(R.id.recyclerview);
-        imagePourStage = findViewById(R.id.idIVCourseImage);
-        nomEtudiant = findViewById(R.id.companyName);
+        bouttonStageTrouver = findViewById(R.id.bouttonStageTrouver);
+        nomEtudiant = findViewById(R.id.nom);
+        bouttonActiverFiltreFav = findViewById(R.id.filtreFavori);
         initialiserrecyclerView();
         afficherTouteLesOffre();
         AllerAlaPagePourPostUneOffre();
         lancerUneRecherche();
         afficherLaCarte();
+        stageTrouver();
         deconnexionUser();
+        afficherLesEntreprise();
 
     }
+
+    /**
+     * affiche les entreprise en favori si le toggle boutton pour favori a étét cliquer s'il a étét décliquer on affiche les entreprise normalement
+     */
+    private void afficherLesEntreprise(){
+     bouttonActiverFiltreFav.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+             if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT){
+
+                 if(bouttonActiverFiltreFav.isChecked()){
+                     afficherentrepriseFav();
+                 }
+                 else if(!bouttonActiverFiltreFav.isChecked()){
+                     getEntreprise();
+                 }
+             }
+         }
+     });
+    }
+
+    /**
+     * lorsqu'on appuie sur le boutton trouver stage ca mets trouver stage = true pour l'étudiant
+     */
+    private void stageTrouver(){
+        bouttonStageTrouver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT) {
+                    client.trouverStage(ConnectUtils.authToken).enqueue(new Callback<ComptePOJO>() {
+                        @Override
+                        public void onResponse(Call<ComptePOJO> call, Response<ComptePOJO> response) {
+                            if (response.isSuccessful()) {
+                                Log.d("tag", "stage trouver en fait");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ComptePOJO> call, Throwable t) {
+
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * initialise le recyclerview avec soit la liste entreprise ou etudiants en fonction de son type
+     */
     private void initialiserrecyclerView(){
         if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT){
             leAdapterEntreprise = new adapterEntreprise(this, listeEntreprises);
@@ -90,7 +137,10 @@ public class  HomePage extends AppCompatActivity {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
     }
-    //permet rechercher une offre dans la barre mais elle n'est pas encore fonctionnel
+
+    /**
+     * affiche que l'élement matchant l'input
+     */
     private void lancerUneRecherche(){
         elementRechercher = findViewById(R.id.barreDeRecherche);
        elementRechercher.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -107,7 +157,10 @@ public class  HomePage extends AppCompatActivity {
        });
 
     }
-    //lance le google map activity en cliquant sur la carte
+
+    /**
+     * affiche la carte
+     */
     private void afficherLaCarte(){
         bouttonMap = findViewById(R.id.buttonMap);
         bouttonMap.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +175,10 @@ public class  HomePage extends AppCompatActivity {
         });
     }
 
+    /**
+     *effectue une recherche avec l'input entrer et recherche entreprise ou etudiant en fonction de l,utilisateur
+     * @param recherche element recherer
+     */
     private void effectuerUneRecherche(String recherche){
         if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT){
             rechercherEntreprise(recherche);
@@ -131,6 +188,9 @@ public class  HomePage extends AppCompatActivity {
         }
     }
 
+    /**
+     * fait la vue lorsqu'on rentre dans homepage tout dependamment sai on est un etudiant ou un proff
+     */
     private void afficherTouteLesOffre() {
         //cherche dans la bd toute les offre
         if(ConnectUtils.authTypeUtilisateur == ComptePOJO.TypeCompte.ETUDIANT){
@@ -143,6 +203,10 @@ public class  HomePage extends AppCompatActivity {
 
     }
 
+    /**
+     * recherche si une des entreprise de l'utilisateur a le nom qui match avec la recherche et actualise la vue
+     * @param recherche est l'element rechercher
+     */
     private void rechercherEntreprise(String recherche){
         ArrayList<Entreprise> listTemp = new ArrayList<Entreprise>();
         for(Entreprise entreprise : listeEntreprises){
@@ -154,6 +218,11 @@ public class  HomePage extends AppCompatActivity {
             leAdapterEntreprise.changerEffectuer(listTemp);
         }
     }
+
+    /**
+     * recherche si un utilisateur a le nom qui match avec la recherche et actualise la vue
+     * @param recherche
+     */
     private void rechercherEtudiant(String recherche){
      ArrayList<ComptePOJO> listTemp = new ArrayList<ComptePOJO>();
      for(ComptePOJO etudiant : listeEtudiants){
@@ -162,24 +231,42 @@ public class  HomePage extends AppCompatActivity {
          }
      }
     }
+
+    /**
+     * affiche les entreprise qui sont favori
+     */
+    private void afficherentrepriseFav(){
+        ArrayList<Entreprise> listTemp = new ArrayList<Entreprise>();
+        for(Entreprise entreprise : listeEntreprises){
+            if(entreprise.getEstFavorite()){
+                listTemp.add(entreprise);
+            }
+        }
+        if(!listTemp.isEmpty()){
+            leAdapterEntreprise.changerEffectuer(listTemp);
+        }
+    }
+
+    /**
+     * affiche tous les étudiants pour les profs
+     */
     private void getEtudiants() {
+
         Context context = HomePage.this;
-//        nomEtudiant.setTextColor(Color.red);
+
         client.getComptesEleves(ConnectUtils.authToken).enqueue(
                 new Callback<List<ComptePOJO>>() {
                     @Override
                     public void onResponse(Call<List<ComptePOJO>> call, Response<List<ComptePOJO>> response) {
-                        Log.d("tag","getstudent worked");
+
                         if (response.isSuccessful()) {
-                            String affichage = "" + response.code();
+
                             List<ComptePOJO> comptes = response.body();
                             for (ComptePOJO compte : comptes) {
-                                Log.d("tag","testons"+compte.getEmail()+" "+compte.getNom());
-                                listeEtudiants.add(new ComptePOJO(compte.getNom(),compte.getPrenom())) ;
+
+                                listeEtudiants.add(new ComptePOJO(compte.getNom(),compte.getPrenom(),compte.getStageTrouver()));
                             }
-
                         }
-
                     }
 
                     @Override
@@ -190,44 +277,25 @@ public class  HomePage extends AppCompatActivity {
         );
 
     }
+
+    /**
+     * obtient les infos de l'étudiant et prend sa liste entreprise et l'affiche ses entreprises
+     */
     private void getEntreprise(){
 
- /*   client.lireEntreprises(ConnectUtils.authToken).enqueue(
-            new Callback<List<Entreprise>>() {
-                @Override
-                public void onResponse(Call<List<Entreprise>> call, Response<List<Entreprise>> response) {
-                    if (response.isSuccessful()) {
-                        Log.d("tag", "voic l'id de ce dernier "+ConnectUtils.authId);
-                        List<Entreprise> lesEntreprises = response.body();
-                        for(Entreprise entreprise : lesEntreprises){
-                            if(entreprise.getId_etudiant()!= null){
-                                if(entreprise.getId_etudiant().equals(ConnectUtils.authId)){
-                                    listOffre.add(new OffreStageListModel(entreprise.getNom(),entreprise.getEmail()));
-                                }
-                            }
-
-
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<Entreprise>> call, Throwable t) {
-
-                }
-            }
-    );*/
      client.getEtudiantConnecte(ConnectUtils.authToken).enqueue(new Callback<ComptePOJO>() {
          @Override
          public void onResponse(Call<ComptePOJO> call, Response<ComptePOJO> response) {
              if(response.isSuccessful()){
-                 Log.d("tag","yess");
+
                  ComptePOJO etudiant = response.body();
+                 listeEntreprises = new ArrayList<Entreprise>();
                  for(Entreprise entreprise : etudiant.getEntreprises()){
                      listeEntreprises.add(new Entreprise(entreprise.getId(),entreprise.getNom(),entreprise.getContact(),entreprise.getEmail(),
                              entreprise.getTelephone(),entreprise.getSiteWeb(),entreprise.getAdresse(),entreprise.getVille(),
                              "",entreprise.getCodePostal(),"",entreprise.getEstFavorite()));
                  }
+                 leAdapterEntreprise.changerEffectuer(listeEntreprises);
              }
          }
 
@@ -238,6 +306,9 @@ public class  HomePage extends AppCompatActivity {
      });
     }
 
+    /**
+     * deconnecte l'utilisateur lorsqu'on appuie sur le boutton
+     */
     private void deconnexionUser(){
         bouttonDeco = findViewById(R.id.button);
         bouttonDeco.setOnClickListener(new View.OnClickListener() {
@@ -250,6 +321,9 @@ public class  HomePage extends AppCompatActivity {
         });
     }
 
+    /**
+     * appelle l'api pour la deconnexion
+     */
     private void deconnexion(){
 
         client.deconnecter (ConnectUtils.authToken).enqueue(new Callback<ResponseBody>() {

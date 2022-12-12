@@ -40,7 +40,6 @@ public class page_de_connexion extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_connexion);
-        //methode permettant d'aller à ls psge d'inscription quand je clique sur le lien
         AllerALaPageInscription();
 
         username = (EditText) findViewById(R.id.inputUsernameL);
@@ -81,20 +80,16 @@ public class page_de_connexion extends AppCompatActivity {
                             }
                         }
                 );
-              /*
-             if(userEntrer.equals("") || mdpEntrer.equals("")){
-                 Toast.makeText(page_de_connexion.this,"un ou plusieurs champs sont vides. Veuillez les remplir", Toast.LENGTH_SHORT).show();
-             }
-             else {
 
-             }
-             */
             }
         });
 
 
     }
 
+    /**
+     * appelle l'api pour connecter l'utilisateur avec les infos entrer dans les champs et lance l'activité homePage
+     */
     private void connecter() {
 
         String userEntrer = username.getText().toString();
@@ -115,7 +110,7 @@ public class page_de_connexion extends AppCompatActivity {
                     String[] myStrings = new String[] {userEntrer,mdpEntrer};
                     connexion.putExtra("strings", myStrings);
                     startActivity(connexion);
-                    Log.d("tag", "connexion par l'id"+json.getId());
+               ;
                 }
             }
 
@@ -127,8 +122,9 @@ public class page_de_connexion extends AppCompatActivity {
 
     }
 
-
-//permet de lancer l'activité d'invité
+    /**
+     * redirige vers la page inscription
+     */
     public void AllerALaPageInscription(){
         TextView button = findViewById(R.id.RegisterLink);
         button.setOnClickListener(new View.OnClickListener() {

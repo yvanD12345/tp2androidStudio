@@ -35,7 +35,7 @@
 
                 <!-- Text View to display Course Name -->
                 <TextView
-                    android:id="@+id/companyName"
+                    android:id="@+id/nom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
@@ -49,16 +49,17 @@
                 <!-- Text VIew to display Course Rating -->
                 <!-- Image used in present in drawable folder -->
                 <TextView
-                    android:id="@+id/nomPoste"
+                    android:id="@+id/emailentreprise"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/companyName"
+                    android:layout_below="@id/nom"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@id/idIVCourseImage"
                     android:drawablePadding="2dp"
                     android:text="posteName"
                     app:drawableStartCompat="@drawable/ic_work" />
+
         </RelativeLayout>
 
         </LinearLayout>

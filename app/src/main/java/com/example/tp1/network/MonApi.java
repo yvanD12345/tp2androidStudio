@@ -62,8 +62,8 @@ public interface MonApi {
 
 
     //modifier stage trouver
-  //  @PATCH("/compte/stagetrouve")
-  //  public Call<Compte> trouverStage(@Header("Authorization") String token);
+    @PATCH("/compte/stagetrouve")
+    public Call<ComptePOJO> trouverStage(@Header("Authorization") String token);
 
     //supprimer un stage
     @DELETE("/stage/{idStage}")

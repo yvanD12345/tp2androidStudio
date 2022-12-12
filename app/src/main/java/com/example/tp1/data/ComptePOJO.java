@@ -22,9 +22,9 @@ public class ComptePOJO implements Serializable
     @SerializedName("email")
     @Expose
     private String email;
-    @SerializedName("stageTrouver")
+    @SerializedName("stageTrouve")
     @Expose
-    private Boolean stageTrouver;
+    private Boolean stageTrouve;
     @SerializedName("typeCompte")
     @Expose
     private TypeCompte typeCompte;
@@ -46,9 +46,10 @@ public class ComptePOJO implements Serializable
      */
     public ComptePOJO() {
     }
-    public ComptePOJO(String nom, String prenom){
+    public ComptePOJO(String nom, String prenom,Boolean stageTrouve){
         this.nom = nom;
         this.prenom = prenom;
+        this.stageTrouve = stageTrouve;
     }
 
     /**
@@ -69,19 +70,12 @@ public class ComptePOJO implements Serializable
         this.typeCompte = typeCompte;
         this.entreprises = entreprises;
     }
-    public void ajouterUneEntreprise(Entreprise entreprise){
-        this.entreprises.add(entreprise);
-    }
-    public void supprimerUneEntreprise(Entreprise entreprise){
-        this.entreprises.remove(entreprise);
-    }
-
     public Boolean getStageTrouver() {
-        return stageTrouver;
+        return stageTrouve;
     }
 
     public void setStageTrouver(Boolean stageTrouver) {
-        this.stageTrouver = stageTrouver;
+        this.stageTrouve = stageTrouver;
     }
 
     public String getId() {

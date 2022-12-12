@@ -2,19 +2,28 @@ package com.example.tp1;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import com.example.tp1.data.Entreprise;
+import com.example.tp1.network.ConnectUtils;
+import com.example.tp1.network.MonAPIClient;
+import com.example.tp1.network.MonApi;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class adapterEntreprise extends RecyclerView.Adapter<adapterEntreprise.MyViewHolder> {
 
@@ -22,6 +31,7 @@ public class adapterEntreprise extends RecyclerView.Adapter<adapterEntreprise.My
 
 
     private ArrayList<Entreprise> entreprises;
+     MonApi client =  MonAPIClient.getRetrofit().create(MonApi.class);
     private int checkedPosition = 0;
 
     public adapterEntreprise(Context context, ArrayList<Entreprise> entreprises) {
@@ -33,7 +43,7 @@ public class adapterEntreprise extends RecyclerView.Adapter<adapterEntreprise.My
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.designe_recyclervew,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.designe_recyclervew2,parent,false);
         return new MyViewHolder(view);
     }
 //inittialiser les donner pour des textview et image view dans le card view
@@ -45,7 +55,10 @@ public class adapterEntreprise extends RecyclerView.Adapter<adapterEntreprise.My
        holder.emailCompanie.setText(model.getEmail());
 
     }
-
+/**
+ * change la liste d'entreprise et on dit l'adaptateur que sa liste a changé
+  * @param entreprise liste d'entreprises qui va remplacer celle dans l'adaptateur
+ */
     public void changerEffectuer(ArrayList<Entreprise> entreprise){
         this.entreprises = entreprise;
         notifyDataSetChanged();
@@ -59,11 +72,29 @@ public class adapterEntreprise extends RecyclerView.Adapter<adapterEntreprise.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView nomCompanie, email_id, contact_id, emailCompanie;
+        ToggleButton bouttonFavori;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            nomCompanie = itemView.findViewById(R.id.companyName);
-            emailCompanie = itemView.findViewById(R.id.nomPoste);
+            nomCompanie = itemView.findViewById(R.id.nom);
+            emailCompanie = itemView.findViewById(R.id.emailentreprise);
+            bouttonFavori = itemView.findViewById(R.id.bouttonFavori);
             //lorsqu'on clique sur un item du recycler view. Je prend sa position et lance un activité pour montrer infos sur celle ci
+            bouttonFavori.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                  if(bouttonFavori.isChecked()){
+                      Entreprise entreprise = entreprises.get(pos);
+                      entreprise.setEstFavorite(true);
+                      changerEntreprisePourFavori(entreprise);
+                    }
+                  else if(!bouttonFavori.isChecked()){
+                      Entreprise entreprise = entreprises.get(pos);
+                      entreprise.setEstFavorite(false);
+                      changerEntreprisePourFavori(entreprise);
+                  }
+                }
+            });
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -83,12 +114,32 @@ public class adapterEntreprise extends RecyclerView.Adapter<adapterEntreprise.My
                         infoEntreprise.putExtra("Contact",clickedItem.getContact());
                         infoEntreprise.putExtra("courriel",clickedItem.getEmail());
                         infoEntreprise.putExtra("id",clickedItem.getId());
-                        Log.d("TAG","VOICI INFO ENTREPRISE"+" CONTACT"+clickedItem.getContact()+" ville "+clickedItem.getVille());
+
                         v.getContext().startActivity(infoEntreprise);
                     }
                 }
             });
         }
+    }
+    /**
+     * change l'entreprise avec le meme id avec celle en parametre dans la méthode afin de faire l'actualisation
+     * @param entreprise est l'entreprise qui a été modifier pour etre mise ou nom en favori
+     */
+    public void changerEntreprisePourFavori(Entreprise entreprise){
+        client.modifierEntreprise(ConnectUtils.authToken,entreprise.getId(),entreprise).enqueue(new Callback<Entreprise>() {
+            @Override
+            public void onResponse(Call<Entreprise> call, Response<Entreprise> response) {
+                if(response.isSuccessful()){
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Entreprise> call, Throwable t) {
+
+            }
+        });
     }
 
 }

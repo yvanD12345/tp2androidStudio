@@ -20,28 +20,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-                <!-- ImageVIew to display our Course Image -->
-                <ImageView
-                    android:id="@+id/idIVCourseImage"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
+
+                <!-- Text View to display Course Name -->
+                <ToggleButton
+                    android:id="@+id/bouttonFavori"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:contentDescription="@string/app_name"
-                    android:padding="5dp"
-                    android:src="@drawable/logocompany" />
+                    android:background="@drawable/favorie"
 
-                <!-- Text View to display Course Name -->
+                    android:contentDescription="@string/app_name"
+                    android:padding="5dp" />
+
                 <TextView
-                    android:id="@+id/companyName"
+                    android:id="@+id/nom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
-                    android:layout_toEndOf="@id/idIVCourseImage"
-                    android:text="CompanyName"
+                    android:layout_toEndOf="@id/bouttonFavori"
+                    android:text="nom"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -49,15 +50,15 @@
                 <!-- Text VIew to display Course Rating -->
                 <!-- Image used in present in drawable folder -->
                 <TextView
-                    android:id="@+id/nomPoste"
+                    android:id="@+id/emailentreprise"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/companyName"
+                    android:layout_below="@id/nom"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
-                    android:layout_toEndOf="@id/idIVCourseImage"
+                    android:layout_toEndOf="@id/bouttonFavori"
                     android:drawablePadding="2dp"
-                    android:text="posteName"
+                    android:text="email entreprise"
                     app:drawableStartCompat="@drawable/ic_work" />
         </RelativeLayout>
 

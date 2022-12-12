@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/companyName"
+        android:id="@+id/nom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/creationoffre"
@@ -47,7 +47,7 @@
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/companyName"
+        app:layout_constraintTop_toBottomOf="@+id/nom"
         tools:ignore="TouchTargetSizeCheck" />
 
     <EditText
