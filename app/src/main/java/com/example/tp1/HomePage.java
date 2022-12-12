@@ -331,7 +331,7 @@ public class  HomePage extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
-                    Log.d("tag","chu deco");
+
                     finish();
                 }
             }

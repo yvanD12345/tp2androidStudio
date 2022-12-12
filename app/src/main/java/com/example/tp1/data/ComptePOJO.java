@@ -52,6 +52,7 @@ public class ComptePOJO implements Serializable
         this.stageTrouve = stageTrouve;
     }
 
+
     /**
      *
      * @param entreprises
